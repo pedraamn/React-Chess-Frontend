@@ -6,7 +6,9 @@ import Tile from './components/Tile';
 
 function App() {
   return (
-    <Chessboard />
+    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <Chessboard />
+    </div>
   );
 }
 
