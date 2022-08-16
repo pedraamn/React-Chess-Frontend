@@ -14,11 +14,11 @@ const moveFunctionMap = {"Pawn": pawnMoves,
                         "Queen": queenMoves,
                         "King": kingMoves}
 
-export function getValidMoves(square, board) {
+export function getValidMoves(square, board, movedPieces) {
     let [row, col] = getRowCol(square)
     let piece = board[row][col].slice(1)
     let func = moveFunctionMap[piece]
-    return func(row, col, board)
+    return func(row, col, board, movedPieces)
 }
 
 function pawnMoves(row, col, board) {
@@ -26,11 +26,16 @@ function pawnMoves(row, col, board) {
     let moveList = []
     let dir = color === "w" ? -1 : 1
     let opp = color === "w" ? "b" : "w"
+    let startRow = color === "w" ? 6 : 1
     let newRow, newCol
     //Forward
     [newRow, newCol] = [row+dir, col]
     if (inRange(newRow, 8) && !board[newRow][newCol]) {
         moveList.push(getSquare(newRow, newCol))
+        //Forward2
+        if (row === startRow && !board[newRow+dir][newCol]) {
+            moveList.push(getSquare(newRow+dir, newCol))
+        }
     }
     //CaptureEast
     [newRow, newCol] = [row+dir, col-1]
@@ -219,10 +224,28 @@ function queenMoves(row, col, board) {
 }
 
 
-function kingMoves(row, col, board) {
+function kingMoves(row, col, board, movedPieces) {
     let color = board[row][col][0]
     let moveList = []
     let newRow, newCol
+    //Castling
+    let king = color === "w" ? movedPieces[7][4] : movedPieces[0][4]
+    let rightRook = color === "w" ? movedPieces[7][7] : movedPieces[0][7]
+    let leftRook = color === "W" ? movedPieces[7][0] : movedPieces[0][0]
+    //CastleRight
+    if (color === "w") {
+        if (king && rightRook && movedPieces[7][5] && movedPieces[7][6]) {
+            moveList.append(126)
+        } else if (king && leftRook && movedPieces[7][1] && movedPieces[7][2] && movedPieces[7][3]) {
+            moveList.append(122)
+        }
+    } else {
+        if (king && rightRook && movedPieces[0][5] && movedPieces[0][6]) {
+            moveList.append(70)
+        } else if (king && leftRook && movedPieces[7][1] && movedPieces[7][2] && movedPieces[7][3]) {
+            moveList.append(66)
+        } 
+    }
     //NorthEast
     [newRow, newCol] = [row-1, col-1]
 

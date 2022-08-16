@@ -8,6 +8,8 @@ function Chessboard() {
     let playerTurn = useRef("w")
     let activePiece = useRef(-1)
     let potentialMoves = useRef([])
+    let movedPieces = useRef(Array(8).fill().map(()=>Array(8).fill(1)))
+
 
     let grid = []
     for (let i = 0; i<8; i++) {
@@ -56,34 +58,77 @@ function Chessboard() {
     }
 
     function handleActive(square) {
-        let pieceMap, colorMap
         if (potentialMoves.current.includes(square)) {
-            let [row, col] = getRowCol(activePiece.current)
-            let [newRow, newCol] = getRowCol(square)
-            let piece = boardState.current[row][col]
-            boardState.current[row][col] = ""
-            boardState.current[newRow][newCol] = piece
-            pieceMap = getPieceMap(piece, activePiece.current, square)
-            playerTurn.current = playerTurn.current === "w" ? "b" : "w"
+            handleMove(square)
+        } else if (potentialMoves.current.includes(square+64)) {
+            handleCastle(square)
+        } else {
+            deActivate()
         }
-        let tilesToChange = getTilesToChange()
-        pieceMap = pieceMap || {}
-        colorMap = getColorMap(0)
-        activePiece.current = -1
-        potentialMoves.current = []
-        updateBoardState(tilesToChange, pieceMap, colorMap)
     }
 
     function handleNotActive(square) {
         let [row, col] = getRowCol(square)
         if (boardState.current[row][col] && boardState.current[row][col][0] === playerTurn.current) {
             activePiece.current = square
-            potentialMoves.current = getValidMoves(square, boardState.current)
+            potentialMoves.current = getValidMoves(square, boardState.current, movedPieces.current)
             let tilesToChange = getTilesToChange()
             let pieceMap = {}
             let colorMap = getColorMap(1)
             updateBoardState(tilesToChange, pieceMap, colorMap)
         }
+    }
+
+    function handleMove(square) {
+        let [row, col] = getRowCol(activePiece.current)
+        let [newRow, newCol] = getRowCol(square)
+        let piece = boardState.current[row][col]
+        boardState.current[row][col] = ""
+        boardState.current[newRow][newCol] = piece
+        movedPieces.current[row][col] = 0
+        pieceMap = getPieceMap(piece, activePiece.current, square)
+        changeTurn()
+        deActivate(pieceMap)
+    }
+
+    function handleCastle(square) {
+        let rook, king, rookBegin, rookEnd, kingBegin, kingEnd
+        if (square === 2) {
+            rook = "bRook"
+            king = "bKing"
+            [rookBegin, rookEnd, kingBegin, kingEnd] = [0, 3, 4, 2]
+        } else if (square === 6) {
+            rook = "bRook"
+            king = "bKing"
+            [rookBegin, rookEnd, kingBegin, kingEnd] = [7, 5, 4, 6]
+        } else if (square === 58) {
+            rook = "wRook"
+            king = "wKing"
+            [rookBegin, rookEnd, kingBegin, kingEnd] = [56, 59, 60, 58]
+        } else {
+            rook = "wRook"
+            king = "wKing"
+            [rookBegin, rookEnd, kingBegin, kingEnd] = [63, 61, 60, 62]
+        }
+        let tilesToChange = getTilesToChange()
+        tilesToChange.push(rookBegin)
+        let pieceMapKing = getPieceMap(king, kingBegin, kingEnd)
+        let pieceMapRook = getPieceMap(rook, rookBegin, rookEnd)
+        let pieceMap = {...pieceMapKing, ...pieceMapRook}
+        changeTurn()
+        deActivate(pieceMap, tilesToChange)
+    }
+
+    function deActivate(pieceMap={}, tilesToChange=[]) {
+        tilesToChange = tilesToChange || getTilesToChange()
+        let colorMap = getColorMap(0)
+        activePiece.current = -1
+        potentialMoves.current = []
+        updateBoardState(tilesToChange, pieceMap, colorMap)
+    }
+
+    function changeTurn() {
+        playerTurn.current = playerTurn.current === "w" ? "b" : "w"
     }
 
     function getTilesToChange() {
@@ -106,7 +151,6 @@ function Chessboard() {
         potentialMoves.current.forEach(pos => {
             colorMap[pos.toString()] = ["highlight", val]
         })
-        console.log(colorMap)
         return colorMap
     }
 
