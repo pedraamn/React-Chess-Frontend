@@ -23,34 +23,34 @@ function Chessboard() {
 
     function updateBoardState(tilesToChange, pieceMap, colorMap) {
         let newBoard = board.map(tile => {
-        if (tilesToChange.includes(parseInt(tile.key))) {
-            let pieceKey, pieceVal, colorKey, colorVal
-            if (pieceMap[tile.key]) {
-                pieceKey = pieceMap[tile.key][0]
-                pieceVal = pieceMap[tile.key][1]
-            } else {
-                pieceKey = "piece"
-                pieceVal = tile.props.piece
+            if (tilesToChange.includes(parseInt(tile.key))) {
+                let pieceKey, pieceVal, colorKey, colorVal
+                if (pieceMap[tile.key]) {
+                    pieceKey = pieceMap[tile.key][0]
+                    pieceVal = pieceMap[tile.key][1]
+                } else {
+                    pieceKey = "piece"
+                    pieceVal = tile.props.piece
+                }
+                if (colorMap[tile.key]) {
+                    colorKey = colorMap[tile.key][0]
+                    colorVal = colorMap[tile.key][1]
+                } else {
+                    pieceKey = "color"
+                    pieceVal = tile.props.color
+                }
+                return <Tile 
+                        color={tile.props.color}
+                        piece={tile.props.piece}
+                        square={tile.key}
+                        active={tile.props.active}
+                        highlight={tile.props.highlight}
+                        key={tile.key}
+                        {...{ [pieceKey]: pieceVal}}
+                        {...{ [colorKey]: colorVal}}
+                        />
             }
-            if (colorMap[tile.key]) {
-                colorKey = colorMap[tile.key][0]
-                colorVal = colorMap[tile.key][1]
-            } else {
-                pieceKey = "color"
-                pieceVal = tile.props.color
-            }
-            return <Tile 
-                    color={tile.props.color}
-                    piece={tile.props.piece}
-                    square={tile.key}
-                    active={tile.props.active}
-                    highlight={tile.props.highlight}
-                    key={tile.key}
-                    {...{ [pieceKey]: pieceVal}}
-                    {...{ [colorKey]: colorVal}}
-                    />
-        }
-        return tile
+            return tile
         })
         setBoard(newBoard)
     }
