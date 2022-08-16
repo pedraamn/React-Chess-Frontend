@@ -28,17 +28,17 @@ function pawnMoves(row, col, board) {
     let opp = color === "w" ? "b" : "w"
     let newRow, newCol
     //Forward
-    newRow = row+dir, newCol = col
+    [newRow, newCol] = [row+dir, col]
     if (inRange(newRow, 8) && !board[newRow][newCol]) {
         moveList.push(getSquare(newRow, newCol))
     }
     //CaptureEast
-    newRow = row+dir, newCol = col-1
+    [newRow, newCol] = [row+dir, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] === opp) {
         moveList.push(getSquare(newRow, newCol))
     }
     //CaptureWest
-    newRow = row+dir, newCol = col+1
+    [newRow, newCol] = [row+dir, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] === opp) {
         moveList.push(getSquare(newRow, newCol))
     }
@@ -50,42 +50,42 @@ function knightMoves(row, col, board) {
     let moveList = []
     let newRow, newCol
     //NorthEastOut
-    newRow = row-1, newCol = col-2
+    [newRow, newCol] = [row-1, col-2]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //NorthEastIn
-    newRow = row-2, newCol = col-1
+    [newRow, newCol] = [row-2, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //NorthWestIn
-    newRow = row-2, newCol = col+1
+    [newRow, newCol] = [row-2, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //NorthWestOut
-    newRow = row-1, newCol = col+2
+    [newRow, newCol] = [row-1, col+2]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthEastOut
-    newRow = row+1, newCol = col-2
+    [newRow, newCol] = [row+1, col-2]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthEastIn
-    newRow = row+2, newCol = col-1
+    [newRow, newCol] = [row+2, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthWestIn
-    newRow = row+1, newCol = col+1
+    [newRow, newCol] = [row+2, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthWestOut
-    newRow = row+1, newCol = col+2
+    [newRow, newCol] = [row+1, col+2]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
@@ -97,7 +97,7 @@ function bishopMoves(row, col, board) {
     let moveList = []
     let newRow, newCol
     //NorthEast
-    newRow = row-1, newCol = col-1
+    [newRow, newCol] = [row-1, col-1]
     while (inRange(newRow, 8) && inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -111,7 +111,7 @@ function bishopMoves(row, col, board) {
         newCol--
     }
     //NorthWest
-    newRow = row-1, newCol = col+1
+    [newRow, newCol] = [row-1, col+1]
     while (inRange(newRow, 8) && inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -125,7 +125,7 @@ function bishopMoves(row, col, board) {
         newCol++
     }
     //SouthEast
-    newRow = row+1, newCol = col-1
+    [newRow, newCol] = [row+1, col-1]
     while (inRange(newRow, 8) && inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -139,7 +139,7 @@ function bishopMoves(row, col, board) {
         newCol--
     }
     //SouthWest
-    newRow = row+1, newCol = col+1
+    [newRow, newCol] = [row+1, col+1]
     while (inRange(newRow, 8) && inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -160,7 +160,7 @@ function rookMoves(row, col, board) {
     let moveList = []
     let newRow, newCol
     //North
-    newRow = row-1, newCol = col
+    [newRow, newCol] = [row-1, col]
     while (inRange(newRow, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -173,7 +173,7 @@ function rookMoves(row, col, board) {
         newRow--
     }
     //South
-    newRow = row+1, newCol = col
+    [newRow, newCol] = [row+1, col]
     while (inRange(newRow, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -186,7 +186,7 @@ function rookMoves(row, col, board) {
         newRow++
     }
     //East
-    newRow = row, newCol = col-1
+    [newRow, newCol] = [row, col-1]
     while (inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -199,7 +199,7 @@ function rookMoves(row, col, board) {
         newCol--
     }
     //West
-    newRow = row, newCol = col+1
+    [newRow, newCol] = [row, col+1]
     while (inRange(newCol, 8)) {
         if (!board[newRow][newCol]) {
             moveList.push(getSquare(newRow, newCol))
@@ -224,42 +224,43 @@ function kingMoves(row, col, board) {
     let moveList = []
     let newRow, newCol
     //NorthEast
-    newRow = row-1, newCol = col-1
+    [newRow, newCol] = [row-1, col-1]
+
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //North
-    newRow = row-1, newCol = col
+    [newRow, newCol] = [row-1, col]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //NorthWest
-    newRow = row-1, newCol = col+1
+    [newRow, newCol] = [row-1, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //East
-    newRow = row, newCol = col-1
+    [newRow, newCol] = [row, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //West
-    newRow = row, newCol = col+1
+    [newRow, newCol] = [row, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthEast
-    newRow = row+1, newCol = col-1
+    [newRow, newCol] = [row+1, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //South
-    newRow = row+1, newCol = col
+    [newRow, newCol] = [row+1, col]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthWest
-    newRow = row+1, newCol = col+1
+    [newRow, newCol] = [row, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
