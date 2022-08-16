@@ -72,7 +72,6 @@ function Chessboard() {
         if (boardState.current[row][col] && boardState.current[row][col][0] === playerTurn.current) {
             activePiece.current = square
             potentialMoves.current = getValidMoves(square, boardState.current, movedPieces.current)
-            console.log(potentialMoves.current)
             let tilesToChange = getTilesToChange()
             let pieceMap = {}
             let colorMap = getColorMap(1, tilesToChange)
@@ -84,7 +83,6 @@ function Chessboard() {
         let piece = getPieceFromSquare(activePiece.current)
         updateBoardState(activePiece.current, square)
         let pieceMap = getPieceMap(piece, activePiece.current, square)
-        console.log(pieceMap)
         deActivate(pieceMap)
         changeTurn()
     }
