@@ -23,7 +23,7 @@ function Chessboard() {
 
     const [board, setBoard] = useState(grid)
 
-    function updateBoardState(tilesToChange, pieceMap, colorMap) {
+    function updateBoard(tilesToChange, pieceMap, colorMap) {
         let newBoard = board.map(tile => {
             if (tilesToChange.includes(parseInt(tile.key))) {
                 let pieceKey, pieceVal, colorKey, colorVal
@@ -72,59 +72,51 @@ function Chessboard() {
         if (boardState.current[row][col] && boardState.current[row][col][0] === playerTurn.current) {
             activePiece.current = square
             potentialMoves.current = getValidMoves(square, boardState.current, movedPieces.current)
+            console.log(potentialMoves.current)
             let tilesToChange = getTilesToChange()
             let pieceMap = {}
-            let colorMap = getColorMap(1)
-            updateBoardState(tilesToChange, pieceMap, colorMap)
+            let colorMap = getColorMap(1, tilesToChange)
+            updateBoard(tilesToChange, pieceMap, colorMap)
         }
     }
 
     function handleMove(square) {
-        let [row, col] = getRowCol(activePiece.current)
-        let [newRow, newCol] = getRowCol(square)
-        let piece = boardState.current[row][col]
-        boardState.current[row][col] = ""
-        boardState.current[newRow][newCol] = piece
-        movedPieces.current[row][col] = 0
-        pieceMap = getPieceMap(piece, activePiece.current, square)
-        changeTurn()
+        let piece = getPieceFromSquare(activePiece.current)
+        updateBoardState(activePiece.current, square)
+        let pieceMap = getPieceMap(piece, activePiece.current, square)
+        console.log(pieceMap)
         deActivate(pieceMap)
+        changeTurn()
     }
 
     function handleCastle(square) {
         let rook, king, rookBegin, rookEnd, kingBegin, kingEnd
         if (square === 2) {
-            rook = "bRook"
-            king = "bKing"
-            [rookBegin, rookEnd, kingBegin, kingEnd] = [0, 3, 4, 2]
+            [rook, king, rookBegin, rookEnd, kingBegin, kingEnd] = ["bRook", "bKing", 0, 3, 4, 2]
         } else if (square === 6) {
-            rook = "bRook"
-            king = "bKing"
-            [rookBegin, rookEnd, kingBegin, kingEnd] = [7, 5, 4, 6]
+            [rook, king, rookBegin, rookEnd, kingBegin, kingEnd] = ["bRook", "bKing", 7, 5, 4, 6]
         } else if (square === 58) {
-            rook = "wRook"
-            king = "wKing"
-            [rookBegin, rookEnd, kingBegin, kingEnd] = [56, 59, 60, 58]
+            [rook, king, rookBegin, rookEnd, kingBegin, kingEnd] = ["wRook", "wKing", 56, 59, 60, 58]
         } else {
-            rook = "wRook"
-            king = "wKing"
-            [rookBegin, rookEnd, kingBegin, kingEnd] = [63, 61, 60, 62]
+            [rook, king, rookBegin, rookEnd, kingBegin, kingEnd] = ["wRook", "wKing", 63, 61, 60, 62]
         }
+        updateBoardState(kingBegin, kingEnd)
+        updateBoardState(rookBegin, rookEnd)
         let tilesToChange = getTilesToChange()
         tilesToChange.push(rookBegin)
         let pieceMapKing = getPieceMap(king, kingBegin, kingEnd)
         let pieceMapRook = getPieceMap(rook, rookBegin, rookEnd)
         let pieceMap = {...pieceMapKing, ...pieceMapRook}
-        changeTurn()
         deActivate(pieceMap, tilesToChange)
+        changeTurn()
     }
 
     function deActivate(pieceMap={}, tilesToChange=[]) {
-        tilesToChange = tilesToChange || getTilesToChange()
-        let colorMap = getColorMap(0)
+        tilesToChange = tilesToChange.length > 0 ? tilesToChange : getTilesToChange()
+        let colorMap = getColorMap(0, tilesToChange)
         activePiece.current = -1
         potentialMoves.current = []
-        updateBoardState(tilesToChange, pieceMap, colorMap)
+        updateBoard(tilesToChange, pieceMap, colorMap)
     }
 
     function changeTurn() {
@@ -133,7 +125,13 @@ function Chessboard() {
 
     function getTilesToChange() {
         let tilesToChange = [activePiece.current]
-        return tilesToChange.concat(potentialMoves.current)
+        potentialMoves.current.forEach(pos => {
+            if (pos >= 64) {
+                pos -= 64
+            }
+            tilesToChange.push(pos)
+        })
+        return tilesToChange
     }
 
     function getPieceMap(piece, begin, end) {
@@ -143,15 +141,29 @@ function Chessboard() {
         return pieceMap
     }
 
-    function getColorMap(sign) {
+    function getColorMap(sign, tilesToChange) {
         let colorMap = {}
         let val = sign ? "active" : ""
         colorMap[activePiece.current.toString()] = ["active", val]
         val = sign ? "highlight" : ""
-        potentialMoves.current.forEach(pos => {
-            colorMap[pos.toString()] = ["highlight", val]
-        })
+        for (let i = 1; i<tilesToChange.length; i++) {
+            colorMap[tilesToChange[i].toString()] = ["highlight", val]
+        }
         return colorMap
+    }
+
+    function getPieceFromSquare(square) {
+        let [row, col] = getRowCol(square)
+        return boardState.current[row][col]
+    }
+
+    function updateBoardState(begin, end) {
+        let [bRow, bCol] = getRowCol(begin)
+        let [eRow, eCol] = getRowCol(end)
+        let piece = boardState.current[bRow][bCol]
+        boardState.current[bRow][bCol] = ""
+        boardState.current[eRow][eCol] = piece
+        movedPieces.current[bRow][bCol] = 0
     }
 
     function handleClick(e) {

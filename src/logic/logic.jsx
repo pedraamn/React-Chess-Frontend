@@ -234,16 +234,16 @@ function kingMoves(row, col, board, movedPieces) {
     let leftRook = color === "W" ? movedPieces[7][0] : movedPieces[0][0]
     //CastleRight
     if (color === "w") {
-        if (king && rightRook && movedPieces[7][5] && movedPieces[7][6]) {
-            moveList.append(126)
-        } else if (king && leftRook && movedPieces[7][1] && movedPieces[7][2] && movedPieces[7][3]) {
-            moveList.append(122)
+        if (king && rightRook && !board[7][5] && !board[7][6]) {
+            moveList.push(126)
+        } else if (king && leftRook && !board[7][1] && !board[7][2] && !board[7][3]) {
+            moveList.push(122)
         }
     } else {
-        if (king && rightRook && movedPieces[0][5] && movedPieces[0][6]) {
-            moveList.append(70)
-        } else if (king && leftRook && movedPieces[7][1] && movedPieces[7][2] && movedPieces[7][3]) {
-            moveList.append(66)
+        if (king && rightRook && !board[0][5] && !board[0][6]) {
+            moveList.push(70)
+        } else if (king && leftRook && !board[7][1] && !board[7][2] && !board[7][3]) {
+            moveList.push(66)
         } 
     }
     //NorthEast
