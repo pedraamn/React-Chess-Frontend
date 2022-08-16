@@ -45,8 +45,51 @@ function pawnMoves(row, col, board) {
     return moveList
 }
 
-function knightMoves() {
-    return [15, 16]
+function knightMoves(row, col, board) {
+    let color = board[row][col][0]
+    let moveList = []
+    let newRow, newCol
+    //NorthEastOut
+    newRow = row-1, newCol = col-2
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //NorthEastIn
+    newRow = row-2, newCol = col-1
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //NorthWestIn
+    newRow = row-2, newCol = col+1
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //NorthWestOut
+    newRow = row-1, newCol = col+2
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //SouthEastOut
+    newRow = row+1, newCol = col-2
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //SouthEastIn
+    newRow = row+2, newCol = col-1
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //SouthWestIn
+    newRow = row+1, newCol = col+1
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    //SouthWestOut
+    newRow = row+1, newCol = col+2
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
+        moveList.push(getSquare(newRow, newCol))
+    }
+    return moveList
 }
 
 function bishopMoves(row, col, board) {
@@ -221,8 +264,6 @@ function kingMoves(row, col, board) {
         moveList.push(getSquare(newRow, newCol))
     }
     return moveList
-
-
 }
 
 export function getRowCol(square) {
