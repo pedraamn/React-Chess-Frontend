@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import Tile from "./Tile";
-import { boardStartState, getValidMoves, getRowCol} from "../logic/mainLogic";
+import { boardStartState, getValidMoves, getRowCol} from "../logic/logic";
 
 
 function Chessboard() {
