@@ -122,10 +122,10 @@ function Chessboard() {
     return(
         <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(8, 100px)',
-            gridTemplateRows: 'repeat(8, 100px)',
-            width: '800px',
-            height: '800px'       
+            gridTemplateColumns: 'repeat(8, 6.25em)',
+            gridTemplateRows: 'repeat(8, 6.25em)',
+            width: '50em',
+            height: '50em'       
         }} onClick={(e) => handleClick(e)}>
             {board}
         </div>

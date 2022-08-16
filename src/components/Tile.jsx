@@ -15,13 +15,13 @@ function Tile(props) {
 
     return(
         <div style={{
-            width: '100px', 
-            height: '100px', 
+            width: '6.25em', 
+            height: '6.25em', 
             backgroundColor: `${colors[color]}`, 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            border: '1px solid black'}}
+            border: '0.0625em solid black'}}
             square={props.square.toString()}>
             {piece && <img src={`images/${piece}.png`} style={{width: '60%', height: '60%', pointerEvents: 'none'}} />}
         </div>
