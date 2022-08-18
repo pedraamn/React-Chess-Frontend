@@ -283,7 +283,7 @@ function kingMoves(row, col, board, movedPieces) {
         moveList.push(getSquare(newRow, newCol))
     }
     //SouthWest
-    [newRow, newCol] = [row, col+1]
+    [newRow, newCol] = [row-1, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }

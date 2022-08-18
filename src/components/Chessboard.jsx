@@ -129,6 +129,7 @@ function Chessboard() {
         let pieceMapKing = getPieceMap(king, kingBegin, kingEnd)
         let pieceMapRook = getPieceMap(rook, rookBegin, rookEnd)
         let pieceMap = {...pieceMapKing, ...pieceMapRook}
+        console.log(pieceMap)
         deActivate(pieceMap, tilesToChange)
         changeTurn()
     }
