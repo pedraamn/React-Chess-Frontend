@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Tile from "./Tile";
 import { boardStartState, getValidMoves, getRowCol} from "../logic/logic";
+import { getEngineMove } from "../lambda/lambda";
 
 
 function Chessboard() {
@@ -77,6 +78,29 @@ function Chessboard() {
             let colorMap = getColorMap(1, tilesToChange)
             updateBoard(tilesToChange, pieceMap, colorMap)
         }
+    }
+
+    async function requestEngine() {
+        let response = await getEngineMove(boardState.current, movedPieces.current)
+        return new Promise(function (resolve, reject) {
+            if (response === "K") {
+                activePiece.current = 4
+                resolve(handleCastle(6))
+            } else if (response === "Q") {
+                activePiece.current = 4
+                resolve(handleCastle(2))
+            } else if (response === "error") {
+                console.log("request engine errored")
+                reject(changeTurn())
+            } else {
+                let responseArr = response.split(",")
+                let begin = parseInt([responseArr[0]])
+                let end = parseInt([responseArr[1]])
+                activePiece.current = begin
+                potentialMoves.current.push(end)
+                resolve(handleMove(end))
+            }
+        })
     }
 
     function handleMove(square) {
@@ -162,6 +186,7 @@ function Chessboard() {
         boardState.current[bRow][bCol] = ""
         boardState.current[eRow][eCol] = piece
         movedPieces.current[bRow][bCol] = 0
+        movedPieces.current[eRow][eCol] = 0
     }
 
     function handleClick(e) {
@@ -172,6 +197,12 @@ function Chessboard() {
             handleActive(square)
         }
     }
+
+    useEffect(() => {
+        if (playerTurn.current === "b") {
+            requestEngine()
+        }
+    }, [playerTurn.current])
 
     return(
         <div style={{
