@@ -85,9 +85,11 @@ function Chessboard() {
         return new Promise(function (resolve, reject) {
             if (response === "K") {
                 activePiece.current = 4
+                potentialMoves.current = [6, 5]
                 resolve(handleCastle(6))
             } else if (response === "Q") {
                 activePiece.current = 4
+                potentialMoves.current = [2, 3]
                 resolve(handleCastle(2))
             } else if (response === "error") {
                 console.log("request engine errored")
@@ -130,6 +132,7 @@ function Chessboard() {
         let pieceMapRook = getPieceMap(rook, rookBegin, rookEnd)
         let pieceMap = {...pieceMapKing, ...pieceMapRook}
         console.log(pieceMap)
+        console.log(tilesToChange)
         deActivate(pieceMap, tilesToChange)
         changeTurn()
     }

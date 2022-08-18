@@ -242,7 +242,7 @@ function kingMoves(row, col, board, movedPieces) {
     } else {
         if (king && rightRook && !board[0][5] && !board[0][6]) {
             moveList.push(70)
-        } else if (king && leftRook && !board[7][1] && !board[7][2] && !board[7][3]) {
+        } else if (king && leftRook && !board[0][1] && !board[0][2] && !board[0][3]) {
             moveList.push(66)
         } 
     }
