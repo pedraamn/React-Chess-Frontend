@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
+
 import Tile from "./Tile";
-import { boardStartState, getValidMoves, getRowCol} from "../logic/logic";
+import { boardStartState, getValidMoves, isInCheck, getRowCol} from "../logic/logic";
 import { getEngineMove } from "../lambda/lambda";
+import Modal from "react-modal/lib/components/Modal";
 
 
 function Chessboard() {
@@ -10,6 +12,9 @@ function Chessboard() {
     let activePiece = useRef(-1)
     let potentialMoves = useRef([])
     let movedPieces = useRef(Array(8).fill().map(()=>Array(8).fill(1)))
+    let promoSquare = useRef(-1)
+
+    const [isPromo, setPromo] = useState(false)
 
 
     let grid = []
@@ -63,6 +68,8 @@ function Chessboard() {
             handleMove(square)
         } else if (potentialMoves.current.includes(square+64)) {
             handleCastle(square)
+        } else if (potentialMoves.current.includes(-square)) {
+            handlePromotion(square)
         } else {
             deActivate()
         }
@@ -73,6 +80,7 @@ function Chessboard() {
         if (boardState.current[row][col] && boardState.current[row][col][0] === playerTurn.current) {
             activePiece.current = square
             potentialMoves.current = getValidMoves(square, boardState.current, movedPieces.current)
+            console.log(potentialMoves)
             let tilesToChange = getTilesToChange()
             let pieceMap = {}
             let colorMap = getColorMap(1, tilesToChange)
@@ -105,9 +113,9 @@ function Chessboard() {
         })
     }
 
-    function handleMove(square) {
-        let piece = getPieceFromSquare(activePiece.current)
-        updateBoardState(activePiece.current, square)
+    function handleMove(square, piece="") {
+        piece = piece || getPieceFromSquare(activePiece.current)
+        updateBoardState(activePiece.current, square, piece)
         let pieceMap = getPieceMap(piece, activePiece.current, square)
         deActivate(pieceMap)
         changeTurn()
@@ -137,11 +145,17 @@ function Chessboard() {
         changeTurn()
     }
 
+    function handlePromotion(square) {
+        promoSquare.current = square
+        setPromo(true)
+    }
+
     function deActivate(pieceMap={}, tilesToChange=[]) {
         tilesToChange = tilesToChange.length > 0 ? tilesToChange : getTilesToChange()
         let colorMap = getColorMap(0, tilesToChange)
         activePiece.current = -1
         potentialMoves.current = []
+        promoSquare.current = -1
         updateBoard(tilesToChange, pieceMap, colorMap)
     }
 
@@ -154,6 +168,8 @@ function Chessboard() {
         potentialMoves.current.forEach(pos => {
             if (pos >= 64) {
                 pos -= 64
+            } else if (pos < 0) {
+                pos *= -1
             }
             tilesToChange.push(pos)
         })
@@ -183,14 +199,20 @@ function Chessboard() {
         return boardState.current[row][col]
     }
 
-    function updateBoardState(begin, end) {
+    function updateBoardState(begin, end, piece="") {
         let [bRow, bCol] = getRowCol(begin)
         let [eRow, eCol] = getRowCol(end)
-        let piece = boardState.current[bRow][bCol]
+        piece = piece || boardState.current[bRow][bCol]
         boardState.current[bRow][bCol] = ""
         boardState.current[eRow][eCol] = piece
         movedPieces.current[bRow][bCol] = 0
         movedPieces.current[eRow][eCol] = 0
+    } 
+
+    function closeModal(piece) {
+        console.log(promoSquare.current)
+        setPromo(false)
+        handleMove(promoSquare.current, piece)
     }
 
     function handleClick(e) {
@@ -217,6 +239,34 @@ function Chessboard() {
             height: '50em'       
         }} onClick={(e) => handleClick(e)}>
             {board}
+            <Modal isOpen={isPromo}
+            style={{
+                content: {
+                display: 'flex',
+                top: '20em',
+                left: '20em',
+                right: '20em',
+                bottom: '20em',
+                border: '1px solid #ccc',
+                background: '#fff',
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                borderRadius: '4px',
+                outline: 'none',
+                alignItems: 'center',
+                justifyContent: 'center',
+                }}}>
+                <div style={{display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3em'}}>
+                    <button><img src={`images/wQueen.png`} style={{width: '6.25em', height: '6.25em'}} onClick={() => closeModal("wQueen") } /></button>
+                    <button><img src={`images/wRook.png`} style={{width: '6.25em', height: '6.25em'}} onClick={() => closeModal("wRook") }  /></button>
+                    <button><img src={`images/wBishop.png`} style={{width: '6.25em', height: '6.25em'}} onClick={() => closeModal("wBishop") } /></button>
+                    <button><img src={`images/wKnight.png`} style={{width: '6.25em', height: '6.25em'}} onClick={() => closeModal("wKnight") } /></button>
+                </div>
+            </Modal>
         </div>
     )
 }

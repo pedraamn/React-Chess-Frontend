@@ -26,12 +26,14 @@ function pawnMoves(row, col, board) {
     let moveList = []
     let dir = color === "w" ? -1 : 1
     let opp = color === "w" ? "b" : "w"
+    let isPromo = (color === "w" && row === 1) || (color === "b" && row === 6) ? -1 : 1
+    console.log(isPromo)
     let startRow = color === "w" ? 6 : 1
     let newRow, newCol
     //Forward
     [newRow, newCol] = [row+dir, col]
     if (inRange(newRow, 8) && !board[newRow][newCol]) {
-        moveList.push(getSquare(newRow, newCol))
+        moveList.push(getSquare(newRow, newCol)*isPromo)
         //Forward2
         if (row === startRow && !board[newRow+dir][newCol]) {
             moveList.push(getSquare(newRow+dir, newCol))
@@ -40,12 +42,12 @@ function pawnMoves(row, col, board) {
     //CaptureEast
     [newRow, newCol] = [row+dir, col-1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] === opp) {
-        moveList.push(getSquare(newRow, newCol))
+        moveList.push(getSquare(newRow, newCol)*isPromo)
     }
     //CaptureWest
     [newRow, newCol] = [row+dir, col+1]
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] === opp) {
-        moveList.push(getSquare(newRow, newCol))
+        moveList.push(getSquare(newRow, newCol)*isPromo)
     }
     return moveList
 }
@@ -248,7 +250,6 @@ function kingMoves(row, col, board, movedPieces) {
     }
     //NorthEast
     [newRow, newCol] = [row-1, col-1]
-
     if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol][0] !== color) {
         moveList.push(getSquare(newRow, newCol))
     }
@@ -288,6 +289,212 @@ function kingMoves(row, col, board, movedPieces) {
         moveList.push(getSquare(newRow, newCol))
     }
     return moveList
+}
+
+export function isInCheck(board, color) {
+    let row, col
+    for (let i = 0; i<8; i++) {
+        for (let j = 0; j<8; j++) {
+            if (board[i][j][0] === color && board[i][j].slice(1) === "King") {
+                [row, col] = [i, j]
+            }
+        }
+    }
+    let opp = color === "w" ? "b" : "w"
+    let oppQueen, oppRook, oppBishop, oppKnight, oppPawn
+    [oppQueen, oppRook, oppBishop, oppKnight, oppPawn, oppKing] = [opp+"Queen", opp+"Rook", opp+"Bishop", opp+"Knight", opp+"Pawn", opp+"King"]
+    //North
+    [newRow, newCol] = [row-1, col]
+    while (inRange(newRow, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppRook || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow--
+    }
+    //South
+    [newRow, newCol] = [row+1, col]
+    while (inRange(newRow, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppRook || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow++
+    }
+    //East
+    [newRow, newCol] = [row, col-1]
+    while (inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppRook || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newCol--
+    }
+    //West
+    [newRow, newCol] = [row, col+1]
+    while (inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppRook || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newCol++
+    }
+    //NorthEast
+    [newRow, newCol] = [row-1, col-1]
+    while (inRange(newRow, 8) && inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppBishop || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow--
+        newCol--
+    }
+    //NorthWest
+    [newRow, newCol] = [row-1, col+1]
+    while (inRange(newRow, 8) && inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppBishop || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow--
+        newCol++
+    }
+    //SouthEast
+    [newRow, newCol] = [row+1, col-1]
+    while (inRange(newRow, 8) && inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppBishop || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow++
+        newCol--
+    }
+    //SouthWest
+    [newRow, newCol] = [row+1, col+1]
+    while (inRange(newRow, 8) && inRange(newCol, 8)) {
+        if (board[newRow][newCol]){
+            if (board[newRow][newCol][0] === color) {
+                break
+            } else if (board[newRow][newCol] === oppBishop || board[newRow][newCol] == oppQueen) {
+                return true
+            }
+        }
+        newRow++
+        newCol++
+    }
+    //NorthEastOut
+    [newRow, newCol] = [row-1, col-2]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //NorthEastIn
+    [newRow, newCol] = [row-2, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //NorthWestIn
+    [newRow, newCol] = [row-2, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //NorthWestOut
+    [newRow, newCol] = [row-1, col+2]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //SouthEastOut
+    [newRow, newCol] = [row+1, col-2]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //SouthEastIn
+    [newRow, newCol] = [row+2, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //SouthWestIn
+    [newRow, newCol] = [row+2, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    //SouthWestOut
+    [newRow, newCol] = [row+1, col+2]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKnight) {
+        return true
+    }
+    let dir = color === "w" ? -1: 1
+    //CaptureEast
+    [newRow, newCol] = [row+dir, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppPawn) {
+        return true
+    }
+    //CaptureWest
+    [newRow, newCol] = [row+dir, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8)  && board[newRow][newCol] && board[newRow][newCol] === oppPawn) {
+        return true
+    }
+    //NorthEast
+    [newRow, newCol] = [row-1, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //North
+    [newRow, newCol] = [row-1, col]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //NorthWest
+    [newRow, newCol] = [row-1, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //East
+    [newRow, newCol] = [row, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //West
+    [newRow, newCol] = [row, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //SouthEast
+    [newRow, newCol] = [row+1, col-1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //South
+    [newRow, newCol] = [row+1, col]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    //SouthWest
+    [newRow, newCol] = [row+1, col+1]
+    if (inRange(newRow, 8) && inRange(newCol, 8) && board[newRow][newCol] && board[newRow][newCol] === oppKing) {
+        return true
+    }
+    return false
 }
 
 export function getRowCol(square) {
