@@ -3,15 +3,15 @@ import { useState } from "react";
 
 
 function Tile(props) {
-    const colors = {"gray":"#808080", "purple":"#604a8a", "active":"#eded18", "highlight":"#0ff50f"}
+    const colors = {"gray":"#808080", "purple":"#604a8a", "active":"#eded18", "highlight":"#0ff50f", "lastMove":"#1cd9d5"}
 
     const [piece, setPiece] = useState(props.piece)
-    const [color, setColor] = useState(props.active || props.highlight || props.color)
+    const [color, setColor] = useState(props.active || props.highlight || props.lastMove || props.color)
 
     useEffect(() => {
         setPiece(props.piece)
-        setColor(props.active || props.highlight || props.color)
-    }, [props.piece, props.active, props.highlight])
+        setColor(props.active || props.highlight || props.lastMove || props.color)
+    }, [props.piece, props.active, props.highlight, props.lastMove])
 
     return(
         <div style={{

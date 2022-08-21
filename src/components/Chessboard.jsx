@@ -13,6 +13,7 @@ function Chessboard() {
     let potentialMoves = useRef([])
     let movedPieces = useRef(Array(8).fill().map(()=>Array(8).fill(1)))
     let promoSquare = useRef(-1)
+    let lastMove = useRef([])
 
     const [isPromo, setPromo] = useState(false)
 
@@ -80,7 +81,6 @@ function Chessboard() {
         if (boardState.current[row][col] && boardState.current[row][col][0] === playerTurn.current) {
             activePiece.current = square
             potentialMoves.current = getValidMoves(square, boardState.current, movedPieces.current)
-            console.log(potentialMoves)
             let tilesToChange = getTilesToChange()
             let pieceMap = {}
             let colorMap = getColorMap(1, tilesToChange)
@@ -106,9 +106,10 @@ function Chessboard() {
                 let responseArr = response.split(",")
                 let begin = parseInt([responseArr[0]])
                 let end = parseInt([responseArr[1]])
+                let piece = responseArr[2]
                 activePiece.current = begin
                 potentialMoves.current.push(end)
-                resolve(handleMove(end))
+                resolve(handleMove(end, piece))
             }
         })
     }
@@ -117,7 +118,8 @@ function Chessboard() {
         piece = piece || getPieceFromSquare(activePiece.current)
         updateBoardState(activePiece.current, square, piece)
         let pieceMap = getPieceMap(piece, activePiece.current, square)
-        deActivate(pieceMap)
+        let sq = playerTurn.current === "b" ? square : -1
+        deActivate(sq, pieceMap)
         changeTurn()
     }
 
@@ -139,9 +141,8 @@ function Chessboard() {
         let pieceMapKing = getPieceMap(king, kingBegin, kingEnd)
         let pieceMapRook = getPieceMap(rook, rookBegin, rookEnd)
         let pieceMap = {...pieceMapKing, ...pieceMapRook}
-        console.log(pieceMap)
-        console.log(tilesToChange)
-        deActivate(pieceMap, tilesToChange)
+        let sq = playerTurn.current === "b" ? sq : -1
+        deActivate(sq, pieceMap, tilesToChange)
         changeTurn()
     }
 
@@ -150,9 +151,12 @@ function Chessboard() {
         setPromo(true)
     }
 
-    function deActivate(pieceMap={}, tilesToChange=[]) {
+    function deActivate(square=-1, pieceMap={}, tilesToChange=[]) {
         tilesToChange = tilesToChange.length > 0 ? tilesToChange : getTilesToChange()
-        let colorMap = getColorMap(0, tilesToChange)
+        if (square > -1) {
+            tilesToChange = tilesToChange.concat(lastMove.current)
+        }
+        let colorMap = square > -1 ? paintLastMove(square) : getColorMap(0, tilesToChange)
         activePiece.current = -1
         potentialMoves.current = []
         promoSquare.current = -1
@@ -191,7 +195,20 @@ function Chessboard() {
         for (let i = 1; i<tilesToChange.length; i++) {
             colorMap[tilesToChange[i].toString()] = ["highlight", val]
         }
+
         return colorMap
+    }
+
+    function paintLastMove(square) {
+        let colorMap = {}
+        lastMove.current.forEach(pos => {
+            colorMap[pos.toString()] = ["lastMove", ""]
+        })
+        colorMap[activePiece.current.toString()] = ["lastMove", "lastMove"]
+        colorMap[square.toString()] = ["lastMove", "lastMove"]
+        lastMove.current = [activePiece.current, square]
+        return colorMap
+
     }
 
     function getPieceFromSquare(square) {
@@ -210,7 +227,6 @@ function Chessboard() {
     } 
 
     function closeModal(piece) {
-        console.log(promoSquare.current)
         setPromo(false)
         handleMove(promoSquare.current, piece)
     }

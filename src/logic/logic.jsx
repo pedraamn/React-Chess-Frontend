@@ -27,7 +27,6 @@ function pawnMoves(row, col, board) {
     let dir = color === "w" ? -1 : 1
     let opp = color === "w" ? "b" : "w"
     let isPromo = (color === "w" && row === 1) || (color === "b" && row === 6) ? -1 : 1
-    console.log(isPromo)
     let startRow = color === "w" ? 6 : 1
     let newRow, newCol
     //Forward
