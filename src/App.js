@@ -34,7 +34,7 @@ function App() {
       </Modal>
       <a href="https://github.com/pedraamn/React-Chess-Frontend" target="_blank">React Front-end Code</a>
       <Chessboard />
-      <a href="https://github.com/pedraamn/Go-ChessEngine" target="_blank">Go Engine Code</a>
+      <a href="https://github.com/pedraamn/Go-Chess-Engine" target="_blank">Go Engine Code</a>
     </div>
   );
 }
