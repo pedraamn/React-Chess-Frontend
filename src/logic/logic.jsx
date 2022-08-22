@@ -302,6 +302,7 @@ export function isInCheck(board, color) {
     let opp = color === "w" ? "b" : "w"
     let oppQueen, oppRook, oppBishop, oppKnight, oppPawn, oppKing
     [oppQueen, oppRook, oppBishop, oppKnight, oppPawn, oppKing] = [opp+"Queen", opp+"Rook", opp+"Bishop", opp+"Knight", opp+"Pawn", opp+"King"]
+    let newRow, newCol
     //North
     [newRow, newCol] = [row-1, col]
     while (inRange(newRow, 8)) {
