@@ -37,7 +37,7 @@ function requestEngineOnLambda(params) {
 function getRequestParams(fen) {
     const params = {
         method: 'POST',
-        url: "https://rgp8k05zq5.execute-api.us-west-1.amazonaws.com/test1stage",
+        url: "https://ffkn5v4nq5.execute-api.us-west-1.amazonaws.com/stage",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -72,5 +72,6 @@ function getFenFromBoard(board, movedPieces) {
     }
     fen += "/"
     fen += "b" //for now
+    console.log(fen)
     return fen
 }
